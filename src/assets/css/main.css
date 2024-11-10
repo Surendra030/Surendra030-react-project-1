@@ -1,0 +1,27 @@
+/* Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background-light dark:bg-background antialiased transition ease-in-out duration-300;
+  @apply scrollbar-thin scrollbar-thumb-slate-500/50 scrollbar-track-slate-500/[0.16] scrollbar-track-rounded-full scrollbar-thumb-rounded-full scroll-smooth;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Scrollbar */
+.scroll-thin {
+  @apply scrollbar-thin scrollbar-thumb-slate-500/50 scrollbar-track-slate-500/[0.16] scrollbar-track-rounded-full scrollbar-thumb-rounded-full scroll-smooth;
+}
