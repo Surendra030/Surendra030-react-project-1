@@ -55,7 +55,7 @@ const UpcomingMovie = () => {
               return (
                 <div
                   key={movie.id}
-                  className='min-w-[180px] md:min-w-[250px] lg:min-w-[250px] flex flex-col'
+                  className='min-w-[90px] max-h-[130px] overflow-hidden md:min-w-[250px] lg:min-w-[250px] flex flex-col'
                 >
                   <MovieCard movie={movie} />
                 </div>

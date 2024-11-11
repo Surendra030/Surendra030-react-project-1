@@ -142,14 +142,14 @@ const Detail = () => {
             <div className='flex justify-between items-center'>
               <p
                 onClick={() => handleContent("trailers")}
-                className={` font-bold tracking-wide xl:text-2xl md:text-xl text-lg text-slate-950 dark:text-slate-100 mb-3 cursor-pointer ${activeItem === 'trailers' ? 'bg-blue-500 text-white p-4 rounded-lg' : ''
+                className={` font-bold tracking-wide xl:text-2xl md:text-xl text-lg text-slate-950 dark:text-slate-100 mb-3 cursor-pointer ${activeItem === 'trailers' ? 'bg-blue-500 text-white p-2 rounded-lg' : ''
                   }`}
               >
                 Trailers
               </p>
               <p
                 onClick={() => handleContent("videos")}
-                className={` font-bold tracking-wide xl:text-2xl md:text-xl text-lg text-slate-950 dark:text-slate-100 mb-3 cursor-pointer ${activeItem === 'videos' ? 'bg-blue-500 text-white p-4 rounded-lg' : ''
+                className={` font-bold tracking-wide xl:text-2xl md:text-xl text-lg text-slate-950 dark:text-slate-100 mb-3 cursor-pointer ${activeItem === 'videos' ? 'bg-blue-500 text-white p-2 rounded-lg' : ''
                   }`}
               >
                 Videos
@@ -196,7 +196,7 @@ const Detail = () => {
                   return (
                     <div
                       key={recommendation.id}
-                      className='min-w-[180px] md:min-w-[250px] lg:min-w-[250px] flex flex-col'
+                      className='min-w-[90px] max-h-[130px] overflow-hidden md:min-w-[250px] lg:min-w-[250px] flex flex-col'
                     >
                       <MovieCard movie={recommendation} />
                     </div>
