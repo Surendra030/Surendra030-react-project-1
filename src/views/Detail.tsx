@@ -196,7 +196,7 @@ const Detail = () => {
                   return (
                     <div
                       key={recommendation.id}
-                      className='min-w-[90px] max-h-[130px] overflow-hidden md:min-w-[250px] lg:min-w-[250px] flex flex-col'
+                      className='min-w-[90px] max-h-[130px] sm:min-w-[150px] sm:max-h-[300px] overflow-hidden md:min-w-[250px] lg:min-w-[250px] flex flex-col'
                     >
                       <MovieCard movie={recommendation} />
                     </div>

@@ -42,7 +42,7 @@ const MovieCard = ({ movie }: IProps) => {
       {/* Movie name */}
       <Link
         to={`/${movie.first_air_date ? 'tv' : 'movie'}/detail/${movie.id}}`}
-        className='text-sm md:text-base text-slate-900 dark:text-slate-100 text-ellipsis mb-1 sm:mb-2 line-clamp-1 cursor-pointer'
+        className=' text-sm md:text-base text-slate-900 dark:text-slate-100 text-ellipsis mb-1 sm:mb-2 line-clamp-1 cursor-pointer'
       >
         {movie.title || movie.name}
       </Link>

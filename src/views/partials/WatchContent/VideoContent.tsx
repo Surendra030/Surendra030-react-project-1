@@ -14,12 +14,14 @@ const VideoContent = () => {
     <div className="  flex space-x-6 w-full overflow-hidden no-scrollbar scroll-smooth">
       <div
         key={`trailer-${id}`}
-        className="lg:w-[500px] md:w-[450px] w-full lg:h-[300px] md:h-[250px] h-[200px] rounded-lg cursor-pointer relative"
+        className="w-full max-h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[320px] rounded-lg cursor-pointer relative"
       >
         <iframe
           src={`${vidsrc}/${type}/${id}`}
-
-          className=" border border-white lg:w-[500px] md:w-[450px] w-full  lg:h-[300px] md:h-[250px] h-[200px] rounded-lg object-cover"
+          allow="fullscreen"
+          allowFullScreen
+          title="Video"
+          className="w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] border border-white rounded-lg object-cover"
         />
 
       </div>

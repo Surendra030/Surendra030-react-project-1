@@ -24,7 +24,7 @@ const vidsrc = import.meta.env.VITE_BASE_VIDSRC_URL;
   console.log(`${vidsrc}/${type}/${id}`);
   
 
-  return (<div className="flex flex-row space-x-6 overflow-x-auto no-scrollbar scroll-smooth">
+  return (<div className="flex flex-row space-x-6 overflow-x-hidden no-scrollbar scroll-smooth">
     <div
       key={`trailer-${id}`}
       className="lg:w-[500px] md:w-[450px] w-[360px] lg:h-[300px] md:h-[250px] h-[200px] rounded-lg cursor-pointer relative"

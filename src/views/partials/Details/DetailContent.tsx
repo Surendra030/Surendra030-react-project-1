@@ -13,7 +13,7 @@ const DetailContent = ({ movie }: IProps) => {
     <div className="flex space-x-6 w-full overflow-x-hidden no-scrollbar scroll-smooth">
       <div
         key={`trailer-${id}`}
-        className="border border-red lg:w-[500px] md:w-[450px] w-full lg:h-[300px] md:h-[250px] h-[200px] rounded-lg cursor-pointer relative"
+        className="border border-red lg:w-[500px] md:w-[450px] w-full lg:h-[350px] md:h-[250px] h-[200px] rounded-lg cursor-pointer relative"
       >
         <img
           src={`https://www.themoviedb.org/t/p/w1920_and_h800_multi_faces${movie.backdrop_path}`}
