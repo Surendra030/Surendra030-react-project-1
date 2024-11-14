@@ -20,8 +20,8 @@ const VideoContent = () => {
           src={`${vidsrc}/${type}/${id}`}
           allow="fullscreen"
           allowFullScreen
-          title="Video"
-          className="w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] border border-white rounded-lg object-cover"
+          title="Movie"
+          className="border border-white shadow-2xl w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] border border-white rounded-lg object-cover"
         />
 
       </div>

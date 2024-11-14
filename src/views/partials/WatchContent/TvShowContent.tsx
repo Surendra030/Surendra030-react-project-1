@@ -31,9 +31,9 @@ const vidsrc = import.meta.env.VITE_BASE_VIDSRC_URL;
     >
       <iframe
         src={`${vidsrc}/${type}/${id}/${sNum}/${epNum}`}
-        
-        className=" border border-white lg:w-[500px] md:w-[450px] w-[360px] lg:h-[300px] md:h-[250px] h-[200px] rounded-lg object-cover"
-      />
+        title='Tvshow'
+        className="border border-white shadow-2xl w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] border border-white rounded-lg object-cover"
+        />
       
     </div>
   </div>
