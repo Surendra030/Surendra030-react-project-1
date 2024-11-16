@@ -83,9 +83,8 @@ const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
               {selectedSeasonEpisodes.map((episode) => (
                 <div
                   key={episode.episode_number}
-                  className="p-1 bg-gray-100 rounded-lg text-left cursor-pointer transform transition-transform hover:scale-105"
+                  className="p-1 bg-gray-100  rounded-lg text-left cursor-pointer transform transition-transform border-2 border-gray-300 hover:border-blue-500"
                   onClick={() =>{
-                    console.log(`Season ${selectedSeason}, Episode ${episode.episode_number}`)
                   setselectedData({sNum:selectedSeason,epNum:episode.episode_number})
                   }
                   }
