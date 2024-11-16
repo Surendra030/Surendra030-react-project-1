@@ -114,3 +114,36 @@ export const getSeasonsAndEpisodes = async (tvId: number) => {
   }
 };
 
+export const getOriginalSource = async (vidsrc: string): Promise<string> => {
+  try {
+    // Step 1: Parse the `vidsrc` details (e.g., `https://vidsrc.icu/embed/tv/36361/1/1`)
+    const urlParts = vidsrc.split('/');
+    const id = urlParts[urlParts.length - 3]; // Extract the ID
+    const season = urlParts[urlParts.length - 2]; // Extract the season
+    const episode = urlParts[urlParts.length - 1]; // Extract the episode
+
+    // Step 2: Construct the new URL
+    const requestUrl = `https://vidsrcme.vidsrc.icu/embed/tv?tmdb=${id}&season=${season}&episode=${episode}&autoplay=1`;
+
+    // Step 3: Fetch the HTML content of the constructed URL
+    const response = await fetch(requestUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data from ${requestUrl}: ${response.statusText}`);
+    }
+    const html = await response.text();
+
+    // Step 4: Parse the HTML and extract the iframe `src`
+    const iframeSrc = html.match(/<iframe[^>]+src="([^"]+)"/)?.[1];
+    if (!iframeSrc) {
+      throw new Error('Iframe with src not found in the HTML response.');
+    }
+
+    // Step 5: Return the full iframe `src` (ensure it has a protocol, e.g., "https://")
+    return iframeSrc.startsWith('//') ? `https:${iframeSrc}` : iframeSrc;
+  } catch (error) {
+    console.error('Error in getOriginalSource:', error);
+    throw error; // Re-throw the error for the calling component to handle
+  }
+};
+
+
