@@ -87,7 +87,6 @@ export const getSeasonsAndEpisodes = async (tvId: number) => {
     });
     
     const seasons = tvDetailsResponse.data.seasons || [];
-    console.log(seasons);
     
     // Step 2: For each season, fetch the episodes
     const seasonDetails = await Promise.all(
@@ -114,7 +113,7 @@ export const getSeasonsAndEpisodes = async (tvId: number) => {
   }
 };
 
-export const getOriginalSource = async (vidsrc: string): Promise<string> => {
+export const getOriginalSource = async (vidsrc: string): Promise<string[]> => {
   try {
     // Step 1: Parse the `vidsrc` details (e.g., `https://vidsrc.icu/embed/tv/36361/1/1`)
     const urlParts = vidsrc.split('/');
@@ -122,9 +121,13 @@ export const getOriginalSource = async (vidsrc: string): Promise<string> => {
     const season = urlParts[urlParts.length - 2]; // Extract the season
     const episode = urlParts[urlParts.length - 1]; // Extract the episode
 
+    if (!id || !season || !episode) {
+      throw new Error('Invalid `vidsrc` URL structure. Unable to extract ID, season, or episode.');
+    }
+
     // Step 2: Construct the new URL
     const requestUrl = `https://vidsrcme.vidsrc.icu/embed/tv?tmdb=${id}&season=${season}&episode=${episode}&autoplay=1`;
-    
+
     // Step 3: Fetch the HTML content of the constructed URL
     const response = await fetch(requestUrl);
     if (!response.ok) {
@@ -132,18 +135,30 @@ export const getOriginalSource = async (vidsrc: string): Promise<string> => {
     }
     const html = await response.text();
 
-    // Step 4: Parse the HTML and extract the iframe `src`
-    const iframeSrc = html.match(/<iframe[^>]+src="([^"]+)"/)?.[1];
-    if (!iframeSrc) {
+    // Step 4: Parse the iframe `src` from the HTML
+    const iframeSrcMatch = html.match(/<iframe[^>]+src="([^"]+)"/);
+    if (!iframeSrcMatch || !iframeSrcMatch[1]) {
       throw new Error('Iframe with src not found in the HTML response.');
     }
+    const primarySrc = iframeSrcMatch[1].startsWith('//') ? `https:${iframeSrcMatch[1]}` : iframeSrcMatch[1];
 
-    // Step 5: Return the full iframe `src` (ensure it has a protocol, e.g., "https://")
-    return iframeSrc.startsWith('//') ? `https:${iframeSrc}` : iframeSrc;
+    // Step 5: Extract backup server URLs from the `data-hash` attributes in the servers section
+    const backupUrls: string[] = Array.from(html.matchAll(/<div class="server"[^>]*data-hash="([^"]+)"/g))
+      .map(match => match[1])
+      .filter(hash => hash) // Filter out any invalid matches
+      .map(hash => `https://${hash}`);
+
+    // Step 6: Combine the primary iframe URL with the backup server URLs
+    const allSources = [primarySrc, ...backupUrls];
+
+    // Step 7: Return the combined list of URLs
+    return allSources;
   } catch (error) {
     console.error('Error in getOriginalSource:', error);
-    throw error; // Re-throw the error for the calling component to handle
+    return []; // Return an empty array on error to avoid breaking calling components
   }
 };
+
+
 
 

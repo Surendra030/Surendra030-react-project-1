@@ -37,13 +37,30 @@ const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
       if (id) {
         const data = await getSeasonsAndEpisodes(parseInt(id));
         setShowDetails(data);
-        if (data.seasons.length > 0) {
-          setSelectedSeason(data.seasons[0].season_number); // Set to Season 1 or the first available season
+  
+        // Filter out Season 0 and set the first valid season
+        const validSeasons = data.seasons.filter(
+          (season) => season.season_number > 0
+        );
+  
+        if (validSeasons.length > 0) {
+          const firstSeason = validSeasons[0];
+          setSelectedSeason(firstSeason.season_number);
+  
+          // Set the first episode of the first valid season
+          if (firstSeason.episodes.length > 0) {
+            setselectedData({
+              sNum: firstSeason.season_number,
+              epNum: firstSeason.episodes[0].episode_number,
+            });
+          }
         }
       }
     };
     fetchDetails();
-  }, [id]);
+  }, [id, setselectedData]);
+  
+  
 
   const handleSeasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeason(parseInt(event.target.value));

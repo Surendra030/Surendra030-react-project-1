@@ -13,7 +13,7 @@ interface VideoContentProps {
 }
 
 const TvShowContent: React.FC<VideoContentProps> = ({ selectedData }) => {
-  const [source, setSource] = useState("");
+  const [source, setSource] = useState(""); // Explicitly define type as string[]
 
   const { type, id } = useParams();
   const { sNum, epNum } = selectedData;
@@ -24,8 +24,8 @@ const TvShowContent: React.FC<VideoContentProps> = ({ selectedData }) => {
     const fetchSource = async () => {
       if (type && id && sNum !== null && epNum !== null) {
         const temp = await getOriginalSource(`${vidsrc}/${type}/${id}/${sNum}/${epNum}`);
-        setSource(temp);
-        
+        setSource(temp[0]);
+
       }
     };
 
@@ -38,12 +38,16 @@ const TvShowContent: React.FC<VideoContentProps> = ({ selectedData }) => {
         key={`trailer-${id}`}
         className="lg:w-[500px] md:w-[450px] w-[360px] lg:h-[300px] md:h-[250px] h-[200px] rounded-lg cursor-pointer relative"
       >
-        <iframe
-          // src={source}
-          src={`${vidsrc}/${type}/${id}/${sNum}/${epNum}`}
-          title="Tvshow"
-          className="border border-white shadow-2xl w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] rounded-lg object-cover"
-        />
+        
+
+         {/* Video Player Iframe */}
+      <iframe
+        src={source}
+        title="Tvshow"
+        className="border border-white shadow-2xl w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] rounded-lg object-cover"
+        allow="fullscreen; encrypted-media; autoplay"  // Allow full-screen and other features
+        allowFullScreen={true}  // Enabling full-screen mode
+      />
       </div>
     </div>
   );
