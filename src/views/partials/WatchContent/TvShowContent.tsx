@@ -38,8 +38,10 @@ const TvShowContent: React.FC<VideoContentProps> = ({ selectedData }) => {
         key={`trailer-${id}`}
         className="lg:w-[500px] md:w-[450px] w-[360px] lg:h-[300px] md:h-[250px] h-[200px] rounded-lg cursor-pointer relative"
       >
+        <h1 className='text-white'>{source}</h1>
         <iframe
-          src={source}
+          // src={source}
+          src={`${vidsrc}/${type}/${id}/${sNum}/${epNum}`}
           title="Tvshow"
           className="border border-white shadow-2xl w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] rounded-lg object-cover"
         />
