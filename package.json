@@ -38,6 +38,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "@tabler/icons-react": "^2.41.0",
     "@types/react-paginate": "^7.1.4",
+    "devtools-detect": "^4.0.2",
     "pnpm": "^9.12.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
