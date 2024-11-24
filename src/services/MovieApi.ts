@@ -113,51 +113,77 @@ export const getSeasonsAndEpisodes = async (tvId: number) => {
   }
 };
 
+// Helper method to construct the URL for TV
+const constructTvUrl = (vidsrc: string): string => {
+  const urlParts = vidsrc.split('/');
+  const id = urlParts[urlParts.length - 3];
+  const season = urlParts[urlParts.length - 2];
+  const episode = urlParts[urlParts.length - 1];
+
+  if (!id || !season || !episode) {
+    throw new Error('Invalid `vidsrc` URL structure for TV. Unable to extract ID, season, or episode.');
+  }
+
+  return `https://vidsrcme.vidsrc.icu/embed/tv?tmdb=${id}&season=${season}&episode=${episode}&autoplay=1`;
+};
+
+// Helper method to construct the URL for Movie
+const constructMovieUrl = (vidsrc: string): string => {
+  const urlParts = vidsrc.split('/');
+  const id = urlParts[urlParts.length - 1]; // Assume ID is the last part of the URL for movie
+
+  if (!id) {
+    throw new Error('Invalid `vidsrc` URL structure for Movie. Unable to extract ID.');
+  }
+
+  return `https://vidsrcme.vidsrc.icu/embed/movie?tmdb=${id}&autoplay=1`;
+};
+
+// Main method to get original sources
 export const getOriginalSource = async (vidsrc: string): Promise<string[]> => {
   try {
-    // Step 1: Parse the `vidsrc` details (e.g., `https://vidsrc.icu/embed/tv/36361/1/1`)
-    const urlParts = vidsrc.split('/');
-    const id = urlParts[urlParts.length - 3]; // Extract the ID
-    const season = urlParts[urlParts.length - 2]; // Extract the season
-    const episode = urlParts[urlParts.length - 1]; // Extract the episode
+    // Determine if the `vidsrc` is for TV or Movie
+    const isTv = vidsrc.includes('/tv/');
+    const isMovie = vidsrc.includes('/movie/');
 
-    if (!id || !season || !episode) {
-      throw new Error('Invalid `vidsrc` URL structure. Unable to extract ID, season, or episode.');
+    if (!isTv && !isMovie) {
+      throw new Error('Invalid `vidsrc` URL structure. URL must contain either `/tv/` or `/movie/`.');
     }
 
-    // Step 2: Construct the new URL
-    const requestUrl = `https://vidsrcme.vidsrc.icu/embed/tv?tmdb=${id}&season=${season}&episode=${episode}&autoplay=1`;
+    // Construct the request URL using the appropriate helper method
+    const requestUrl = isTv ? constructTvUrl(vidsrc) : constructMovieUrl(vidsrc);
 
-    // Step 3: Fetch the HTML content of the constructed URL
+    // Fetch the HTML content of the constructed URL
     const response = await fetch(requestUrl);
     if (!response.ok) {
       throw new Error(`Failed to fetch data from ${requestUrl}: ${response.statusText}`);
     }
     const html = await response.text();
 
-    // Step 4: Parse the iframe `src` from the HTML
+    // Parse the iframe `src` from the HTML
     const iframeSrcMatch = html.match(/<iframe[^>]+src="([^"]+)"/);
     if (!iframeSrcMatch || !iframeSrcMatch[1]) {
       throw new Error('Iframe with src not found in the HTML response.');
     }
     const primarySrc = iframeSrcMatch[1].startsWith('//') ? `https:${iframeSrcMatch[1]}` : iframeSrcMatch[1];
 
-    // Step 5: Extract backup server URLs from the `data-hash` attributes in the servers section
+    // Extract backup server URLs from the `data-hash` attributes in the servers section
     const backupUrls: string[] = Array.from(html.matchAll(/<div class="server"[^>]*data-hash="([^"]+)"/g))
       .map(match => match[1])
       .filter(hash => hash) // Filter out any invalid matches
       .map(hash => `https://${hash}`);
 
-    // Step 6: Combine the primary iframe URL with the backup server URLs
+    // Combine the primary iframe URL with the backup server URLs
     const allSources = [primarySrc, ...backupUrls];
 
-    // Step 7: Return the combined list of URLs
+    // Return the combined list of URLs
     return allSources;
   } catch (error) {
     console.error('Error in getOriginalSource:', error);
     return []; // Return an empty array on error to avoid breaking calling components
   }
 };
+
 
 
 
