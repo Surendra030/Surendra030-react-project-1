@@ -44,16 +44,14 @@ const TvShowDetails = () => {
   const [reviews, setReviews] = useState<IMovieReviews[]>([])
   const [recommendations, setRecommendations] = useState<IMovie[]>([])
 
-  const [activeItem, setActiveItem] = useState('trailers')
+  const [activeItem, setActiveItem] = useState('trailers'); // 'trailers' as the default active item
+
 
   interface SelectedData {
     sNum: null | number;
     epNum: null | number;
   }
   const [selectedData, setselectedData] = useState<SelectedData>({ sNum: null, epNum: null });
-
-  // ✅ ADDED: this stores iframe source from TvShowContent
-  const [iframeSource, setIframeSource] = useState<string>("");
 
   // Get Detail Movie
   const getDetailMovie = async () => {
@@ -111,8 +109,8 @@ const TvShowDetails = () => {
   }
 
   const handleContent = (type: string) => {
-    setActiveItem(type)
-  }
+    setActiveItem(type); // Update the active item based on the clicked type
+  };
 
   // Mounted
   useEffect(() => {
@@ -165,45 +163,31 @@ const TvShowDetails = () => {
                 Videos
               </p>
             </div>
-
-            {activeItem === 'trailers' &&
-              (isLoading ? <DetailTrailerSkeleton /> : <DetailTrailers trailers={trailers} />)
-            }
-
+            {activeItem === 'trailers' && (
+              isLoading ? <DetailTrailerSkeleton /> : <DetailTrailers trailers={trailers} />
+            )}
             {activeItem === 'videos' && (
               type === 'tv' ? (
                 <div>
-                  <h1 className='text-white p-2 text-lg'>
-                    Season : {selectedData.sNum} / Ep : {selectedData.epNum}
-                  </h1>
-
-                  {/* ✅ passing callback to receive iframe source */}
-                  <TvShowContent
-                    selectedData={selectedData}
-                    onSourceChange={setIframeSource}
-                  />
-
-                  {/* ✅ Copy button (added safely) */}
-                  {iframeSource && (
-                    <button
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg mt-4"
-                      onClick={() =>
-                        navigator.clipboard.writeText(iframeSource)
-                      }
-                    >
-                      Copy Source
-                    </button>
-                  )}
+                  <h1 className='text-white p-2 text-lg'>Season : {selectedData.sNum} / Ep : {selectedData.epNum}</h1>
+                  <TvShowContent selectedData={selectedData}  />
 
                   <TvDetail setselectedData={setselectedData} />
+
                 </div>
+
               ) : isLoading ? (
                 <DetailTrailerSkeleton />
               ) : (
-                <VideoContent />
+                <VideoContent  />
+
               )
             )}
+
+
           </div>
+
+
 
           {/* Reviews */}
           <div>
@@ -227,7 +211,7 @@ const TvShowDetails = () => {
                     <div
                       key={recommendation.id}
                       className='flex flex-col min-w-[90px] max-h-[200px] sm:min-w-[150px] sm:max-h-[300px]  md:min-w-[200px] md:max-h-[320px]  lg:min-w-[200px] lg:max-h-[320px]  overflow-hidden '
-                    >
+                      >
                       <MovieCard movie={recommendation} />
                     </div>
                   )

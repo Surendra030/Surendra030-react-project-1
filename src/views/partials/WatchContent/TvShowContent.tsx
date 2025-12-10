@@ -10,16 +10,10 @@ interface SelectedData {
 
 interface VideoContentProps {
   selectedData: SelectedData;
-
-  // ✅ ADDED (optional, non-breaking)
-  onSourceChange?: (source: string) => void;
 }
 
-const TvShowContent: React.FC<VideoContentProps> = ({
-  selectedData,
-  onSourceChange
-}) => {
-  const [source, setSource] = useState("");
+const TvShowContent: React.FC<VideoContentProps> = ({ selectedData }) => {
+  const [source, setSource] = useState(""); // Explicitly define type as string[]
 
   const { type, id } = useParams();
   const { sNum, epNum } = selectedData;
@@ -29,23 +23,14 @@ const TvShowContent: React.FC<VideoContentProps> = ({
   useEffect(() => {
     const fetchSource = async () => {
       if (type && id && sNum !== null && epNum !== null) {
-        const temp = await getOriginalSource(
-          `${vidsrc}/${type}/${id}/${sNum}/${epNum}`
-        );
+        const temp = await getOriginalSource(`${vidsrc}/${type}/${id}/${sNum}/${epNum}`);
+        setSource(temp[0]);
 
-        const iframeSource = temp[0];
-
-        setSource(iframeSource);
-
-        // ✅ notify parent / listener
-        if (onSourceChange) {
-          onSourceChange(iframeSource);
-        }
       }
     };
 
     fetchSource();
-  }, [type, id, sNum, epNum, vidsrc, onSourceChange]);
+  }, [type, id, sNum, epNum, vidsrc]);
 
   return (
     <div className="flex flex-row space-x-6 overflow-x-hidden no-scrollbar scroll-smooth">
@@ -53,14 +38,16 @@ const TvShowContent: React.FC<VideoContentProps> = ({
         key={`trailer-${id}`}
         className="lg:w-[500px] md:w-[450px] w-[360px] lg:h-[300px] md:h-[250px] h-[200px] rounded-lg cursor-pointer relative"
       >
-        {/* Video Player Iframe */}
-        <iframe
-          src={source}
-          title="Tvshow"
-          className="border border-white shadow-2xl w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] rounded-lg object-cover"
-          allow="fullscreen; encrypted-media; autoplay"
-          allowFullScreen={true}
-        />
+        
+
+         {/* Video Player Iframe */}
+      <iframe
+        src={source}
+        title="Tvshow"
+        className="border border-white shadow-2xl w-full h-[200px] md:w-[450px] md:h-[250px] lg:w-[500px] lg:h-[300px] rounded-lg object-cover"
+        allow="fullscreen; encrypted-media; autoplay"  // Allow full-screen and other features
+        allowFullScreen={true}  // Enabling full-screen mode
+      />
       </div>
     </div>
   );

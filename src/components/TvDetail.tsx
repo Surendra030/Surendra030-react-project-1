@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSeasonsAndEpisodes } from '@/services/MovieApi';
+import { getOriginalSource } from '@/services/MovieApi';
 
 interface Episode {
   episode_number: number;
@@ -69,25 +70,37 @@ const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
   };
 
   // ✅ Added: handle copy logic
-  const handleCopy = (
-    e: React.MouseEvent,
-    season: number,
-    episode: number
-  ) => {
-    e.stopPropagation(); // ✅ prevent episode click
+  const handleCopy = async (
+  e: React.MouseEvent,
+  season: number,
+  episode: number
+) => {
+  e.stopPropagation();
 
-    if (!id) return;
+  if (!id) return;
 
-    const videoUrl = `${vidsrc}/tv/${id}/${season}/${episode}`;
-    navigator.clipboard.writeText(videoUrl);
+  try {
+    const VidSrcUrl = `${vidsrc}/tv/${id}/${season}/${episode}`;
+
+    // ✅ WAIT for async result
+    const sources = await getOriginalSource(VidSrcUrl);
+
+    if (sources.length > 0) {
+      // ✅ copy REAL iframe src
+      await navigator.clipboard.writeText(sources[0]);
+    } else {
+      await navigator.clipboard.writeText("No Url Found");
+    }
 
     setCopiedEpisode(episode);
+    setTimeout(() => setCopiedEpisode(null), 1500);
 
-    // reset color after 1.5s
-    setTimeout(() => {
-      setCopiedEpisode(null);
-    }, 1500);
-  };
+  } catch (err) {
+    console.error("Copy failed", err);
+    await navigator.clipboard.writeText("Failed to fetch source");
+  }
+};
+
 
   const selectedSeasonEpisodes =
     showDetails?.seasons.find(
