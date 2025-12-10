@@ -29,25 +29,29 @@ interface TvDetailProps {
 const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
 
   const { id } = useParams<{ id: string }>();
+
+  const vidsrc = import.meta.env.VITE_BASE_VIDSRC_URL;
+
   const [showDetails, setShowDetails] = useState<ShowDetails | null>(null);
-  const [selectedSeason, setSelectedSeason] = useState<number>(1); // Default to Season 1 if it exists
+  const [selectedSeason, setSelectedSeason] = useState<number>(1);
+
+  // ✅ Added: track copied episode
+  const [copiedEpisode, setCopiedEpisode] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
       if (id) {
         const data = await getSeasonsAndEpisodes(parseInt(id));
         setShowDetails(data);
-  
-        // Filter out Season 0 and set the first valid season
+
         const validSeasons = data.seasons.filter(
           (season) => season.season_number > 0
         );
-  
+
         if (validSeasons.length > 0) {
           const firstSeason = validSeasons[0];
           setSelectedSeason(firstSeason.season_number);
-  
-          // Set the first episode of the first valid season
+
           if (firstSeason.episodes.length > 0) {
             setselectedData({
               sNum: firstSeason.season_number,
@@ -59,11 +63,30 @@ const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
     };
     fetchDetails();
   }, [id, setselectedData]);
-  
-  
 
   const handleSeasonChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeason(parseInt(event.target.value));
+  };
+
+  // ✅ Added: handle copy logic
+  const handleCopy = (
+    e: React.MouseEvent,
+    season: number,
+    episode: number
+  ) => {
+    e.stopPropagation(); // ✅ prevent episode click
+
+    if (!id) return;
+
+    const videoUrl = `${vidsrc}/tv/${id}/${season}/${episode}`;
+    navigator.clipboard.writeText(videoUrl);
+
+    setCopiedEpisode(episode);
+
+    // reset color after 1.5s
+    setTimeout(() => {
+      setCopiedEpisode(null);
+    }, 1500);
   };
 
   const selectedSeasonEpisodes =
@@ -72,19 +95,19 @@ const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
     )?.episodes || [];
 
   return (
-    <div className=" p-5 text-white ">
+    <div className="p-5 text-white">
       {showDetails ? (
         <div>
 
-          <div className=" w-full flex flex-row  items-center justify-between mb-4">
-            <label htmlFor="seasonSelect" className=" text-white font-semibold text-lg">
+          <div className="w-full flex flex-row items-center justify-between mb-4">
+            <label htmlFor="seasonSelect" className="text-white font-semibold text-lg">
               Select Season:
             </label>
             <select
               id="seasonSelect"
               value={selectedSeason}
               onChange={handleSeasonChange}
-              className="text-gray-900   p-2   rounded-md  text-lg"
+              className="text-gray-900 p-2 rounded-md text-lg"
             >
               {showDetails.seasons.map((season) => (
                 <option key={season.season_number} value={season.season_number}>
@@ -95,19 +118,43 @@ const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
           </div>
 
           <div>
-            <h2 className=" text-white text-xl font-semibold mb-2">Episodes:</h2>
+            <h2 className="text-white text-xl font-semibold mb-2">Episodes:</h2>
             <div className="flex flex-col gap-4 h-[75vh] overflow-y-scroll">
               {selectedSeasonEpisodes.map((episode) => (
                 <div
                   key={episode.episode_number}
-                  className="p-1 bg-gray-100  rounded-lg text-left cursor-pointer transform transition-transform border-2 border-gray-300 hover:border-blue-500"
-                  onClick={() =>{
-                  setselectedData({sNum:selectedSeason,epNum:episode.episode_number})
-                  }
-                  }
+                  onClick={() => {
+                    setselectedData({
+                      sNum: selectedSeason,
+                      epNum: episode.episode_number
+                    });
+                  }}
+                  className={`p-2 rounded-lg cursor-pointer border-2 transform transition-all
+                    ${
+                      copiedEpisode === episode.episode_number
+                        ? 'bg-green-200 border-green-500'
+                        : 'bg-gray-100 border-gray-300 hover:border-blue-500'
+                    }
+                  `}
                 >
-                  <div className=" flex flex-row justify-start text-gray-600">Ep : {episode.episode_number}
-                    <strong className=" text-left text-lg font-medium mb-1 ms-4">{episode.name}</strong>
+                  <div className="flex justify-between items-center text-gray-600">
+                    <div className="flex">
+                      Ep : {episode.episode_number}
+                      <strong className="ms-4 text-lg font-medium">
+                        {episode.name}
+                      </strong>
+                    </div>
+
+                    {/* ✅ COPY BUTTON */}
+                    <button
+                      onClick={(e) =>
+                        handleCopy(e, selectedSeason, episode.episode_number)
+                      }
+                      className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                    >
+                      Copy
+                    </button>
+
                   </div>
                 </div>
               ))}
