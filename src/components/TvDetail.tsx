@@ -26,7 +26,7 @@ interface SelectedData {
 interface TvDetailProps {
   setselectedData: Dispatch<SetStateAction<SelectedData>>;
 }
-
+ 
 const TvDetail: React.FC<TvDetailProps> = ({ setselectedData }) => {
 
   const { id } = useParams<{ id: string }>();
