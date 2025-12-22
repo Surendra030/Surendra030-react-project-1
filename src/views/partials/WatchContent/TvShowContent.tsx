@@ -96,23 +96,24 @@ const TvShowContent: React.FC<VideoContentProps> = ({ selectedData }) => {
       </div>
 
       {/* Controls */}
-      <div className="flex gap-4">
-        <button
-          onClick={goPrev}
-          disabled={!epNum || epNum === 1}
-          className="px-4 py-2 bg-blue-500 disabled:bg-gray-500 rounded-lg text-white"
-        >
-          ⏮ Prev
-        </button>
+<div className="flex flex-col w-full gap-3 md:flex-row md:w-auto">
+  <button
+    onClick={goPrev}
+    disabled={!epNum || epNum === 1}
+    className="w-full md:w-auto px-4 py-3 bg-blue-500 disabled:bg-gray-500 rounded-lg text-white"
+  >
+    ⏮ Prev
+  </button>
 
-        <button
-          onClick={goNext}
-          disabled={!epNum || epNum === maxEpisodes}
-          className="px-4 py-2 bg-green-500 disabled:bg-gray-500 rounded-lg text-white"
-        >
-          ⏭ Next
-        </button>
-      </div>
+  <button
+    onClick={goNext}
+    disabled={!epNum || epNum === maxEpisodes}
+    className="w-full md:w-auto px-4 py-3 bg-green-500 disabled:bg-gray-500 rounded-lg text-white"
+  >
+    ⏭ Next
+  </button>
+</div>
+
 
     </div>
   );
