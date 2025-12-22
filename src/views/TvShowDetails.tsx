@@ -111,6 +111,15 @@ const TvShowDetails = () => {
   const handleContent = (type: string) => {
     setActiveItem(type); // Update the active item based on the clicked type
   };
+  
+useEffect(() => {
+  const listener = (e: any) => {
+    setselectedData(e.detail);
+  };
+
+  window.addEventListener("changeEpisode", listener);
+  return () => window.removeEventListener("changeEpisode", listener);
+}, []);
 
   // Mounted
   useEffect(() => {
